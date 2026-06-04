@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": false,
   "description": "TypeScript API layer for safe agent-driven commerce browsing over shared browser controllers.",
-  "main": "dist/server.js",
-  "types": "dist/server.d.ts",
+  "main": "dist/src/server.js",
+  "types": "dist/src/server.d.ts",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "build": "tsc -p tsconfig.json",
     "test": "node --import tsx --test test/**/*.test.ts",
     "check": "npm run build && npm test"
