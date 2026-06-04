@@ -1,0 +1,38 @@
+{
+  "name": "commerce-api",
+  "version": "1.0.0",
+  "private": false,
+  "description": "TypeScript API layer for safe agent-driven commerce browsing over shared browser controllers.",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.json",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "check": "npm run build && npm test"
+  },
+  "keywords": [
+    "commerce",
+    "instacart",
+    "ubereats",
+    "browser-automation",
+    "typescript",
+    "agent-tools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
