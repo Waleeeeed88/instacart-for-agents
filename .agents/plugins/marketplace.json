@@ -1,0 +1,20 @@
+{
+  "name": "instacart-for-agents-marketplace",
+  "interface": {
+    "displayName": "Instacart for Agents"
+  },
+  "plugins": [
+    {
+      "name": "instacart-for-agents",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
