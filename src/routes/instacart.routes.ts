@@ -2,7 +2,8 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import { analyzeText } from '../parsers/index.js';
 import { buildCartPlan } from '../services/cart-planner.js';
 import { ControllerProxy } from '../services/controller-proxy.js';
-import type { CartPlanConstraints, InstacartControllerConfig } from '../domain/types.js';
+import { InstacartLoginService } from '../services/instacart-login.js';
+import type { CartPlanConstraints, InstacartControllerConfig, InstacartLoginStartRequest, InstacartLoginSubmitOtpRequest } from '../domain/types.js';
 import { HttpError } from '../utils/http-error.js';
 
 const SAFE_ACTIONS = ['click', 'type', 'press', 'scroll', 'reload', 'nav', 'click-near-text'] as const;
@@ -18,6 +19,7 @@ function asyncRoute(handler: Handler): Handler {
 
 export function createInstacartRouter(controller: InstacartControllerConfig, controllerProxy: ControllerProxy): Router {
   const router = Router();
+  const loginService = new InstacartLoginService(controller, controllerProxy);
 
   router.get('/apps', (_req, res) => {
     res.json({ apps: [{ name: controller.name, baseUrl: controller.baseUrl }], native: '/instacart' });
@@ -55,6 +57,24 @@ export function createInstacartRouter(controller: InstacartControllerConfig, con
         controllerProxy.getText(controller),
       ]);
       res.json({ analyzedAt: new Date().toISOString(), app: controller.name, controller: controller.baseUrl, analysis: analyzeText(text, state) });
+    }));
+
+    router.get(`${base}/login`, asyncRoute(async (_req, res) => {
+      res.json({ checkedAt: new Date().toISOString(), app: controller.name, status: await loginService.getStatus() });
+    }));
+
+    router.get(`${base}/login/status`, asyncRoute(async (_req, res) => {
+      res.json({ checkedAt: new Date().toISOString(), app: controller.name, status: await loginService.getStatus() });
+    }));
+
+    router.post(`${base}/login/start`, asyncRoute(async (req, res) => {
+      const request = (req.body ?? {}) as InstacartLoginStartRequest;
+      res.json({ app: controller.name, status: await loginService.startPhoneLogin(request) });
+    }));
+
+    router.post(`${base}/login/otp`, asyncRoute(async (req, res) => {
+      const request = (req.body ?? {}) as InstacartLoginSubmitOtpRequest;
+      res.json({ app: controller.name, status: await loginService.submitOtp(request) });
     }));
 
     router.get(`${base}/vision`, asyncRoute(async (_req, res) => {

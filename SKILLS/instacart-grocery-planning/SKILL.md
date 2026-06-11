@@ -63,12 +63,14 @@ Use halal-labeled meats only for meat. Non-meat staples are usually acceptable u
 
 ## Cart mutation pattern
 
-1. Open `/instacart/analysis`; confirm the browser is logged in and on Instacart.
-2. Search available stores/products with store-specific Instacart.ca URLs.
-3. Open the cart drawer and clear existing items if rebuilding.
-4. Add first unit from the exact product card; for duplicates use the exact row/card increment control, not another broad add click.
-5. Reopen cart drawer and verify `Family Cart`, quantities, `Item subtotal`, and checkout total/discount line.
-6. Report item subtotal and any discounted/pre-checkout line separately. State checkout was not completed.
+1. Check `/instacart/login/status` first.
+2. If `loggedIn: false`, use the phone OTP layer before cart work.
+3. Open `/instacart/analysis`; confirm the browser is logged in and on Instacart.
+4. Search available stores/products with store-specific Instacart.ca URLs.
+5. Open the cart drawer and clear existing items if rebuilding.
+6. Add first unit from the exact product card; for duplicates use the exact row/card increment control, not another broad add click.
+7. Reopen cart drawer and verify `Family Cart`, quantities, `Item subtotal`, and checkout total/discount line.
+8. Report item subtotal and any discounted/pre-checkout line separately. State checkout was not completed.
 
 ## Pitfalls
 
