@@ -61,6 +61,30 @@ export interface UnknownInstacartAnalysis extends BaseInstacartAnalysis {
 
 export type InstacartAnalysisResult = InstacartAnalysis | UnknownInstacartAnalysis;
 
+export interface InstacartLoginStatus {
+  caseType: 'not-logged-in' | 'logged-in';
+  loggedIn: boolean;
+  loginVisible: boolean;
+  otpVisible: boolean;
+  phoneOtpPreferred: true;
+  loginUrl: string;
+  homeUrl: string;
+  deliveryAddress: string | null;
+  nextAction: 'phone_required' | 'otp_required' | 'verify_connection' | 'ready';
+  instructions: string;
+}
+
+export interface InstacartLoginStartRequest {
+  phoneNumber?: string;
+  loginUrl?: string;
+  submit?: boolean;
+}
+
+export interface InstacartLoginSubmitOtpRequest {
+  otpCode?: string;
+  submit?: boolean;
+}
+
 export interface CartPlanConstraints {
   maxSubtotal?: number;
   requireHalal?: boolean;

@@ -42,6 +42,8 @@ Use `/instacart/*`:
 - `GET /instacart/elements`
 - `GET /instacart/analysis`
 - `GET /instacart/vision`
+- `GET /instacart/login`, `/login/status`
+- `POST /instacart/login/start`, `/login/otp`
 - `POST /instacart/goto`
 - `POST /instacart/click`, `/type`, `/press`, `/scroll`, `/reload`, `/nav`, `/click-near-text`
 - `POST /instacart/cart-plan`
@@ -54,6 +56,7 @@ Legacy `/apps/instacart/*` aliases exist only for old dashboards. Do not add oth
 - `cart-plan` must default to `checkoutBlocked: true`.
 - Non-Instacart surfaces should analyze as `unknown` instead of falling through to another parser.
 - Keep user credentials inside the browser profile, never in API logs or repo files.
+- Preferred login path is phone-number OTP: start with `/instacart/login/status`, then `/instacart/login/start`, `/instacart/login/otp`, and verify status again.
 
 ## Verification
 

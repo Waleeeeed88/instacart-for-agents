@@ -152,13 +152,46 @@ Recommended flow:
 
 | Step | Agent Action                      | Goal                                                 |
 | ---: | --------------------------------- | ---------------------------------------------------- |
-|    1 | Read current page state           | Understand where the user is                         |
-|    2 | Inspect visible text and elements | Identify stores, products, cart, or search results   |
-|    3 | Analyze grocery context           | Determine what matters for the user’s goal           |
-|    4 | Compare options                   | Look at price, dietary fit, quantity, and store fees |
-|    5 | Build a cart plan                 | Suggest what to add, replace, or avoid               |
-|    6 | Return clear reasoning            | Explain tradeoffs to the user                        |
-|    7 | Stop before checkout              | User remains responsible for purchase                |
+|    1 | Read login/session state          | Decide whether this is case 1: not logged in, or case 2: logged in |
+|    2 | If needed, start phone OTP login  | Use user-provided phone number; user receives and verifies SMS OTP |
+|    3 | Inspect visible text and elements | Identify stores, products, cart, or search results   |
+|    4 | Analyze grocery context           | Determine what matters for the user’s goal           |
+|    5 | Compare options                   | Look at price, dietary fit, quantity, and store fees |
+|    6 | Build a cart plan                 | Suggest what to add, replace, or avoid               |
+|    7 | Return clear reasoning            | Explain tradeoffs to the user                        |
+|    8 | Stop before checkout              | User remains responsible for purchase                |
+
+---
+
+## 🔐 Phone OTP Login Layer
+
+Most users will start in **case 1: not logged into Instacart**. Agents should prefer phone-number OTP login because it keeps credentials out of prompts, API payloads, logs, and source files.
+
+```txt
+Case 1: User is not logged in
+  → GET /instacart/login/status
+  → POST /instacart/login/start { phoneNumber }
+  → user receives SMS OTP
+  → POST /instacart/login/otp { otpCode }
+  → GET /instacart/login/status to verify connection
+
+Case 2: User is already logged in
+  → GET /instacart/login/status returns loggedIn: true
+  → continue to /instacart/analysis and cart planning
+```
+
+Native login endpoints:
+
+```txt
+GET  /instacart/login
+GET  /instacart/login/status
+POST /instacart/login/start
+POST /instacart/login/otp
+```
+
+Legacy aliases also exist under `/apps/instacart/login/*` for old dashboards.
+
+Agents must not ask for or store passwords. The only supported login automation path is user-authorized phone OTP, and the user must verify the connection after entering the code.
 
 ---
 
@@ -331,6 +364,7 @@ This layer is responsible for:
 | Compare stores           |      ✅ |        ✅ |   ⚠️ Basic |
 | Build grocery plan       |      ✅ |        ✅ |          ✅ |
 | Handle complex reasoning |      ✅ |        ✅ | ⚠️ Limited |
+| Phone OTP login        |      ✅ |        ✅ |          ✅ |
 | Checkout                 |      ❌ |        ❌ |          ❌ |
 | Payment                  |      ❌ |        ❌ |          ❌ |
 
@@ -400,12 +434,14 @@ This layer should be tested around:
 | Cart planning   | Keep recommendations safe and reviewable |
 | Store discovery | Support address-aware grocery comparison |
 | Agent behavior  | Make sure outputs stop before checkout   |
+| Login state     | Separate not-logged-in vs logged-in cases |
+| Phone OTP flow  | Ensure phone-number OTP calls are safe and verifyable |
 
 ---
 
 ## ⚠️ Important Agent Warnings
 
-Agents should pause or refuse when they encounter:
+Agents should pause or hand control to the user when they encounter:
 
 ```txt
 ⚠️ Checkout confirmation pages
@@ -414,10 +450,10 @@ Agents should pause or refuse when they encounter:
 ⚠️ Tip confirmation screens
 ⚠️ Final order buttons
 ⚠️ Account security prompts
-⚠️ Login or password screens
+⚠️ Login screens that are not part of the phone OTP layer
 ```
 
-The correct action is to stop and ask the user to continue manually.
+The correct action is to stop and ask the user to continue manually. For normal Instacart login, use only the phone OTP layer: ask for the phone number, request the SMS code once, enter the OTP once, and verify connection state.
 
 ---
 
@@ -430,6 +466,7 @@ The correct action is to stop and ask the user to continue manually.
 ✅ Grocery page analysis
 ✅ Safe cart planning
 ✅ Store discovery support
+✅ Phone OTP login layer
 
 🚧 Better product categorization
 🚧 More structured grocery plans
