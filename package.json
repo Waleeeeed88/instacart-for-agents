@@ -1,8 +1,8 @@
 {
-  "name": "commerce-api",
+  "name": "instacart-api",
   "version": "1.0.0",
   "private": false,
-  "description": "TypeScript API layer for safe agent-driven commerce browsing over shared browser controllers.",
+  "description": "TypeScript Instacart.ca API layer for safe agent-driven grocery planning over a user-authorized browser controller.",
   "main": "dist/src/server.js",
   "types": "dist/src/server.d.ts",
   "type": "module",
@@ -14,9 +14,8 @@
     "check": "npm run build && npm test"
   },
   "keywords": [
-    "commerce",
     "instacart",
-    "ubereats",
+    "grocery-planning",
     "browser-automation",
     "typescript",
     "agent-tools"

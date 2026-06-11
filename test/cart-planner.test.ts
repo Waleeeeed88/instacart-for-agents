@@ -4,13 +4,15 @@ import { analyzeText } from '../src/parsers/index.js';
 import { buildCartPlan } from '../src/services/cart-planner.js';
 import { instacartPromoCart } from './fixtures.js';
 
-test('plans and validates a safe $100 cheap halal Instacart cart with promotions and fats mainly', () => {
+test('plans and validates a safe $100 cheap halal Instacart cart with promotions and fats/protein', () => {
   const analysis = analyzeText(instacartPromoCart, { title: 'Instacart', url: 'https://www.instacart.ca/store/adonis' });
   const plan = buildCartPlan(analysis, {
     maxSubtotal: 100,
     requireHalal: true,
     preferPromotions: true,
-    focus: ['budget', 'fat'],
+    focus: ['budget', 'fat', 'protein'],
+    people: 2,
+    days: 14,
   });
 
   assert.equal(plan.eligible, true);
@@ -18,8 +20,11 @@ test('plans and validates a safe $100 cheap halal Instacart cart with promotions
   assert.equal(plan.budget.remaining, 11.04);
   assert.equal(plan.promotion.usePromotion, true);
   assert.equal(plan.nutritionFocus.fatFocused, true);
+  assert.equal(plan.nutritionFocus.proteinFocused, true);
   assert.ok(plan.highlights.some((highlight) => highlight.includes('Halal Chicken Drumsticks')));
-  assert.ok(plan.nextSafeActions.every((action) => !/checkout|payment|place order/i.test(action)));
+  assert.ok(plan.storeScope.compareStores.includes('Food Basics'));
+  assert.ok(plan.storeScope.compareStores.includes('Costco'));
+  assert.ok(plan.nextSafeActions.every((action) => !/payment|place order/i.test(action)));
 });
 
 test('cart planner fails closed when halal is required but no halal anchor is visible', () => {

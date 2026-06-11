@@ -11,7 +11,7 @@ async function listen(server: http.Server): Promise<string> {
   return `http://127.0.0.1:${address.port}`;
 }
 
-test('HTTP API proxies a controller, analyzes Instacart, and returns safe cart-plan guidance', async (t) => {
+test('native Instacart HTTP API proxies a controller, analyzes cart, and returns safe cart-plan guidance', async (t) => {
   const controller = http.createServer((req, res) => {
     if (req.url === '/state') {
       res.setHeader('content-type', 'application/json');
@@ -35,26 +35,37 @@ test('HTTP API proxies a controller, analyzes Instacart, and returns safe cart-p
   t.after(() => controller.close());
 
   const app = createApp({
-    apps: { instacart: { name: 'instacart', baseUrl: controllerBaseUrl } },
+    controller: { name: 'instacart', baseUrl: controllerBaseUrl },
     timeoutMs: 2_000,
   });
   const api = http.createServer(app);
   const apiBaseUrl = await listen(api);
   t.after(() => api.close());
 
-  const analysisResponse = await fetch(`${apiBaseUrl}/apps/instacart/analysis`);
+  const healthResponse = await fetch(`${apiBaseUrl}/health`);
+  assert.equal(healthResponse.status, 200);
+  assert.equal((await healthResponse.json()).service, 'instacart-api');
+
+  const analysisResponse = await fetch(`${apiBaseUrl}/instacart/analysis`);
   assert.equal(analysisResponse.status, 200);
   const analysisPayload = await analysisResponse.json();
   assert.equal(analysisPayload.analysis.surface, 'instacart');
   assert.equal(analysisPayload.analysis.subtotal, 88.96);
 
-  const planResponse = await fetch(`${apiBaseUrl}/apps/instacart/cart-plan`, {
+  const legacyAliasResponse = await fetch(`${apiBaseUrl}/apps/instacart/analysis`);
+  assert.equal(legacyAliasResponse.status, 200);
+
+  const unknownAppResponse = await fetch(`${apiBaseUrl}/apps/ubereats/analysis`);
+  assert.equal(unknownAppResponse.status, 404);
+
+  const planResponse = await fetch(`${apiBaseUrl}/instacart/cart-plan`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ maxSubtotal: 100, requireHalal: true, preferPromotions: true, focus: ['budget', 'fat'] }),
+    body: JSON.stringify({ maxSubtotal: 100, requireHalal: true, preferPromotions: true, focus: ['budget', 'fat', 'protein'], people: 2, days: 14 }),
   });
   assert.equal(planResponse.status, 200);
   const planPayload = await planResponse.json();
   assert.equal(planPayload.recommendation.eligible, true);
   assert.equal(planPayload.recommendation.checkoutBlocked, true);
+  assert.ok(planPayload.recommendation.storeScope.compareStores.includes('Costco'));
 });

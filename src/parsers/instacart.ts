@@ -1,5 +1,5 @@
-import type { BrowserState, CartItem, CommerceOffer, InstacartAnalysis } from '../domain/types.js';
-import { isFatAnchor, isHalalText, isPromotionText } from './classifiers.js';
+import type { BrowserState, CartItem, InstacartAnalysis, InstacartOffer } from '../domain/types.js';
+import { isFatAnchor, isHalalText, isPromotionText, isProteinAnchor } from './classifiers.js';
 import { moneyToNumber } from './money.js';
 import { linesOf, nearestLine } from './text.js';
 
@@ -106,6 +106,7 @@ function parseCartItems(lines: string[], lower: string[], subtotalIdx: number): 
       price: moneyToNumber(next) ?? moneyToNumber(next2),
       quantityLabel: findQuantityLabel(lines, i, endIdx),
       halalTagged: isHalalText(context),
+      proteinAnchor: isProteinAnchor(context),
       fatAnchor: isFatAnchor(line),
       promotionTagged: isPromotionText(context),
     });
@@ -121,8 +122,8 @@ function findQuantityLabel(lines: string[], start: number, end: number): string 
   return null;
 }
 
-function parsePromotions(lines: string[]): CommerceOffer[] {
-  const promotions: CommerceOffer[] = [];
+function parsePromotions(lines: string[]): InstacartOffer[] {
+  const promotions: InstacartOffer[] = [];
   lines.forEach((line, index) => {
     if (/\d+%\s*off/i.test(line)) {
       promotions.push({

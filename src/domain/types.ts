@@ -1,4 +1,4 @@
-export type CommerceSurface = 'instacart' | 'ubereats' | 'doordash' | 'unknown';
+export type InstacartSurface = 'instacart' | 'unknown';
 
 export interface BrowserState {
   ok?: boolean;
@@ -8,52 +8,34 @@ export interface BrowserState {
   [key: string]: unknown;
 }
 
-export interface CommerceAppConfig {
-  name: string;
+export interface InstacartControllerConfig {
+  name: 'instacart';
   baseUrl: string;
 }
-
-export type CommerceApps = Record<string, CommerceAppConfig>;
 
 export interface CartItem {
   name: string;
   price: number | null;
   quantityLabel?: string | null;
   halalTagged?: boolean;
+  proteinAnchor?: boolean;
   fatAnchor?: boolean;
   promotionTagged?: boolean;
 }
 
-export interface CommerceOffer {
+export interface InstacartOffer {
   type: 'BOGO' | 'delivery_fee' | 'discount' | 'checkout_discount' | 'unknown';
   item?: string | null;
   description: string;
 }
 
-export interface BaseAnalysis {
-  surface: CommerceSurface;
+export interface BaseInstacartAnalysis {
+  surface: InstacartSurface;
   url: string | null;
   title: string | null;
 }
 
-export interface UberEatsAnalysis extends BaseAnalysis {
-  surface: 'ubereats';
-  deliveryAddress: string | null;
-  restaurant: string | null;
-  cartCount: number | null;
-  subtotal: number | null;
-  subtotalLabel: string | null;
-  rating: number | null;
-  eta: string | null;
-  distance: string | null;
-  halalTagged: boolean;
-  offers: CommerceOffer[];
-  cartItems: CartItem[];
-  checkoutVisible: boolean;
-  loginVisible: boolean;
-}
-
-export interface InstacartAnalysis extends BaseAnalysis {
+export interface InstacartAnalysis extends BaseInstacartAnalysis {
   surface: 'instacart';
   store: string | null;
   deliveryAddress: string | null;
@@ -67,16 +49,17 @@ export interface InstacartAnalysis extends BaseAnalysis {
   cartItems: CartItem[];
   cartEmpty: boolean;
   checkoutVisible: boolean;
-  promotions: CommerceOffer[];
+  promotions: InstacartOffer[];
   hasPromotions: boolean;
 }
 
-export interface UnknownAnalysis extends BaseAnalysis {
-  surface: 'doordash' | 'unknown';
+export interface UnknownInstacartAnalysis extends BaseInstacartAnalysis {
+  surface: 'unknown';
   lineCount: number;
+  warning: string;
 }
 
-export type CommerceAnalysis = InstacartAnalysis | UberEatsAnalysis | UnknownAnalysis;
+export type InstacartAnalysisResult = InstacartAnalysis | UnknownInstacartAnalysis;
 
 export interface CartPlanConstraints {
   maxSubtotal?: number;
@@ -84,6 +67,10 @@ export interface CartPlanConstraints {
   preferPromotions?: boolean;
   neverCheckout?: boolean;
   focus?: Array<'budget' | 'fat' | 'protein'>;
+  people?: number;
+  days?: number;
+  addressHint?: string;
+  candidateStores?: string[];
 }
 
 export interface CartPlanRecommendation {
@@ -95,14 +82,21 @@ export interface CartPlanRecommendation {
     subtotal: number | null;
     remaining: number | null;
   };
+  storeScope: {
+    selectedStore: string | null;
+    compareStores: string[];
+    addressHint: string | null;
+  };
   promotion: {
     required: boolean;
     usePromotion: boolean;
-    offers: CommerceOffer[];
+    offers: InstacartOffer[];
   };
   nutritionFocus: {
     requested: string[];
+    proteinFocused: boolean;
     fatFocused: boolean;
+    proteinAnchors: string[];
     fatAnchors: string[];
   };
   highlights: string[];

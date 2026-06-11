@@ -1,26 +1,21 @@
-import type { CommerceApps } from '../domain/types.js';
+import type { InstacartControllerConfig } from '../domain/types.js';
 
-const DEFAULT_APPS = 'shared=http://127.0.0.1:6080,instacart=http://127.0.0.1:6080,ubereats=http://127.0.0.1:6080';
+const DEFAULT_INSTACART_CONTROLLER_URL = 'http://127.0.0.1:6082';
 
 export interface EnvironmentConfig {
   port: number;
   timeoutMs: number;
-  apps: CommerceApps;
+  controller: InstacartControllerConfig;
 }
 
-export function parseCommerceApps(raw = DEFAULT_APPS): CommerceApps {
-  return raw
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .reduce<CommerceApps>((apps, part) => {
-      const [name, ...rest] = part.split('=');
-      const baseUrl = rest.join('=').replace(/\/$/, '');
-      if (name && baseUrl) {
-        apps[name] = { name, baseUrl };
-      }
-      return apps;
-    }, {});
+function parseLegacyCommerceApps(raw: string | undefined): string | null {
+  if (!raw) return null;
+  for (const part of raw.split(',')) {
+    const [name, ...rest] = part.trim().split('=');
+    const baseUrl = rest.join('=').replace(/\/$/, '');
+    if (name === 'instacart' && baseUrl) return baseUrl;
+  }
+  return null;
 }
 
 function numberFromEnv(value: string | undefined, fallback: number): number {
@@ -28,10 +23,16 @@ function numberFromEnv(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function instacartControllerUrl(env: NodeJS.ProcessEnv): string {
+  return (env.INSTACART_CONTROLLER_URL
+    ?? parseLegacyCommerceApps(env.COMMERCE_APPS)
+    ?? DEFAULT_INSTACART_CONTROLLER_URL).replace(/\/$/, '');
+}
+
 export function loadEnvironment(env: NodeJS.ProcessEnv = process.env): EnvironmentConfig {
   return {
     port: numberFromEnv(env.PORT, 7077),
-    timeoutMs: numberFromEnv(env.COMMERCE_API_TIMEOUT_MS, 10_000),
-    apps: parseCommerceApps(env.COMMERCE_APPS ?? DEFAULT_APPS),
+    timeoutMs: numberFromEnv(env.INSTACART_API_TIMEOUT_MS ?? env.COMMERCE_API_TIMEOUT_MS, 10_000),
+    controller: { name: 'instacart', baseUrl: instacartControllerUrl(env) },
   };
 }

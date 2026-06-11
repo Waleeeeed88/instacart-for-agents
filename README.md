@@ -1,17 +1,21 @@
-# Commerce API
+# Instacart API
 
-TypeScript backend for safe, agent-friendly shopping automation over shared-browser controllers. It wraps real browser sessions for Instacart, Uber Eats, and similar commerce surfaces with structured state, parsing, screenshots, and safe browser actions.
+TypeScript backend for safe, agent-friendly Instacart.ca grocery planning over a user-authorized shared-browser controller. This service is intentionally **Instacart-native only**: the public API is `/instacart/*`, the parser is Instacart-specific, and the planner compares address-available Instacart grocery stores before recommending or mutating a cart.
 
-## Why this exists
+## What this is / is not
 
-Shopping sites keep cart/session state in the browser. This API does **not** pretend to be an official Instacart or Uber Eats API. It is a local, typed service that wraps a user-authorized browser controller so agents can inspect and mutate carts more reliably while the user can still watch the same session.
+- This is a local wrapper around a logged-in Instacart browser session.
+- It is not the official Instacart Developer Platform and does not bypass login, pricing, substitutions, checkout review, or user authorization.
+- It does not expose checkout/payment/place-order endpoints.
+- Legacy `/apps/instacart/*` aliases are kept only so existing dashboards do not break; non-Instacart apps return 404.
 
 ## Safety model
 
 - No checkout, payment, or place-order endpoint exists.
 - Browser actions are limited to inspection/navigation/safe interaction helpers.
-- Cart planning always returns `checkoutBlocked: true` unless explicitly configured otherwise by the caller.
-- Secrets stay in `.env`; use `.env.example` for committed configuration shape.
+- Cart planning returns `checkoutBlocked: true` by default.
+- Final ordering still requires explicit user action/authorization.
+- Use Instacart.ca routes and Canadian address/store context unless explicitly changed.
 
 ## Architecture
 
@@ -19,23 +23,26 @@ Shopping sites keep cart/session state in the browser. This API does **not** pre
 src/
   app.ts                         # Express app factory for tests and production
   server.ts                      # Process entrypoint
-  config/environment.ts          # Env parsing and app-controller mapping
-  domain/types.ts                # Shared TypeScript domain contracts
+  config/environment.ts          # Instacart controller env parsing
+  domain/types.ts                # Instacart-native TypeScript contracts
   middleware/                    # Error and not-found handlers
-  parsers/                       # Pure DOM-text parsers for each commerce surface
-  routes/                        # HTTP route composition
-  services/                      # Controller proxy + cart planner
+  parsers/                       # Pure Instacart DOM-text parsers
+  routes/instacart.routes.ts     # Native /instacart API + legacy alias
+  services/                      # Controller proxy + Instacart cart planner
   utils/                         # Timeout and error helpers
+SKILLS/
+  instacart-grocery-planning/    # Agent grocery-planning skill
+  instacart-api/                 # API operation skill
+  instacart-store-discovery/     # Address-aware store comparison skill
 test/
   *.test.ts                      # Node test runner + tsx
-  fixtures.ts                    # Cart fixtures, including $100 halal/fat/promo case
 ```
 
 ## Requirements
 
 - Node.js 20+
 - npm
-- One or more local shared-browser controllers, usually on `127.0.0.1:6080`
+- A local shared-browser controller for the saved Instacart profile, usually `127.0.0.1:6082`
 
 ## Install
 
@@ -45,8 +52,6 @@ npm ci
 
 ## Configure
 
-Copy the example env if needed:
-
 ```bash
 cp .env.example .env
 ```
@@ -54,14 +59,10 @@ cp .env.example .env
 Environment variables:
 
 - `PORT` default: `7077`
-- `COMMERCE_API_TIMEOUT_MS` default: `10000`
-- `COMMERCE_APPS` default: `shared=http://127.0.0.1:6080,instacart=http://127.0.0.1:6080,ubereats=http://127.0.0.1:6080`
+- `INSTACART_API_TIMEOUT_MS` default: `10000`
+- `INSTACART_CONTROLLER_URL` default: `http://127.0.0.1:6082`
 
-`COMMERCE_APPS` format:
-
-```txt
-appName=http://controller-host:port,anotherApp=http://controller-host:port
-```
+`COMMERCE_APPS=instacart=http://...` is still accepted as a transitional fallback, but the service itself is Instacart-only.
 
 ## Run
 
@@ -76,31 +77,38 @@ Development:
 npm run dev
 ```
 
-## Endpoints
+## Native endpoints
 
 - `GET /health`
-- `GET /apps`
-- `GET /apps/:app/state`
-- `GET /apps/:app/text`
-- `GET /apps/:app/screenshot.jpg`
-- `GET /apps/:app/vision`
-- `GET /apps/:app/analysis`
-- `GET /apps/:app/elements`
-- `POST /apps/:app/goto` body `{ "url": "https://..." }`
-- `POST /apps/:app/click` body `{ "x": 100, "y": 200 }`
-- `POST /apps/:app/type` body `{ "text": "hello" }`
-- `POST /apps/:app/press` body `{ "key": "Enter" }`
-- `POST /apps/:app/scroll` body `{ "dy": 700 }`
-- `POST /apps/:app/reload`
-- `POST /apps/:app/nav`
-- `POST /apps/:app/click-near-text`
-- `POST /apps/:app/cart-plan`
+- `GET /instacart/state`
+- `GET /instacart/text`
+- `GET /instacart/screenshot.jpg`
+- `GET /instacart/vision`
+- `GET /instacart/analysis`
+- `GET /instacart/elements`
+- `POST /instacart/goto` body `{ "url": "https://www.instacart.ca/..." }`
+- `POST /instacart/click` body `{ "x": 100, "y": 200 }`
+- `POST /instacart/type` body `{ "text": "hello" }`
+- `POST /instacart/press` body `{ "key": "Enter" }`
+- `POST /instacart/scroll` body `{ "dy": 700 }`
+- `POST /instacart/reload`
+- `POST /instacart/nav`
+- `POST /instacart/click-near-text`
+- `POST /instacart/cart-plan`
 
 Example cart-plan request:
 
 ```bash
-curl -s http://127.0.0.1:7077/apps/instacart/cart-plan   -H 'content-type: application/json'   -d '{"maxSubtotal":100,"requireHalal":true,"preferPromotions":true,"focus":["budget","fat"]}'
+curl -s http://127.0.0.1:7077/instacart/cart-plan \
+  -H 'content-type: application/json' \
+  -d '{"maxSubtotal":250,"requireHalal":true,"preferPromotions":true,"focus":["budget","protein"],"people":2,"days":14}'
 ```
+
+## Store scope
+
+The planner scope is not hard-coded to one retailer. Before cart mutation, compare all relevant stores available for the active Instacart address, including Food Basics, Walmart, No Frills, Adonis, FreshCo, Metro, Costco, Costco Business Centre, Iqbal Foods, Real Canadian Superstore, Wholesale Club, and any other visible grocery stores for that address.
+
+Prefer one no-markup/low-fee store unless a multi-store split clearly beats the extra fee/service complexity.
 
 ## Tests
 
@@ -110,19 +118,10 @@ npm run build
 npm run check
 ```
 
-The test suite includes a verified fixture for a **sub-$100 cheap halal Instacart cart with promotions and fat-focused anchors**:
+The test suite verifies:
 
-- Halal chicken drumsticks sale anchor
-- Zabiha halal ground chicken promotion
-- Eggs, butter, olive oil, avocado, and full-fat yogurt as fat-focused items
-- Checkout discount parsing
-- Safe cart-plan response with order placement blocked
-
-## GitHub Actions
-
-`.github/workflows/ci.yml` runs:
-
-```bash
-npm ci
-npm run check
-```
+- Non-Instacart surfaces are rejected as `unknown` instead of parsed as another app.
+- `/instacart/*` routes proxy a controller and return structured Instacart analysis.
+- `/apps/instacart/*` legacy aliases still work.
+- Non-Instacart `/apps/:app` routes return 404.
+- Cart planning stays checkout-blocked and includes broad address-aware store scope.
