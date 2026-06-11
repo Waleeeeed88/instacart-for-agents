@@ -1,0 +1,27 @@
+{
+  "name": "instacart-for-agents",
+  "version": "0.1.0",
+  "description": "Codex plugin for safe Instacart.ca grocery planning, phone OTP login, store comparison, and cart analysis over a local browser-controller API.",
+  "keywords": [
+    "instacart",
+    "grocery",
+    "shopping",
+    "phone-otp",
+    "cart-planning",
+    "agent-tools"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Instacart for Agents",
+    "shortDescription": "Safe Instacart login, analysis, store discovery, and grocery cart planning for Codex.",
+    "longDescription": "Use a user-authorized Instacart.ca browser session through a local TypeScript API. Supports two login cases, phone-number OTP onboarding, address-aware store comparison, cart analysis, and no-checkout safety rules.",
+    "category": "Productivity",
+    "tags": [
+      "Instacart",
+      "Grocery Planning",
+      "Shopping",
+      "Automation",
+      "Safety"
+    ]
+  }
+}

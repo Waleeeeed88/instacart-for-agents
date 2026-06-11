@@ -37,6 +37,31 @@ Let agents help users plan groceries.
 Never let agents complete purchases.
 ```
 
+This repository is also packaged as a **Codex plugin**. It includes:
+
+```txt
+.codex-plugin/plugin.json          # Codex plugin manifest
+.agents/plugins/marketplace.json   # Repo marketplace entry
+skills/instacart-for-agents/       # Codex plugin skill
+AGENTS.md                          # Repo-wide Codex instructions
+```
+
+Install the marketplace from Codex:
+
+```bash
+codex plugin marketplace add Waleeeeed88/instacart-for-agents --ref main
+codex /plugins
+```
+
+For local plugin development from a checkout:
+
+```bash
+codex plugin marketplace add ./
+codex /plugins
+```
+
+Then install/enable **Instacart for Agents** and invoke `@instacart-for-agents` when you want Codex to use this layer.
+
 ---
 
 ## 🤖 Supported Agents
@@ -46,6 +71,7 @@ For now, this layer is designed for:
 | Agent        |                          Status | Purpose                                           |
 | ------------ | ------------------------------: | ------------------------------------------------- |
 | 🧠 Hermes    |                     ✅ Supported | Grocery planning, page reasoning, cart analysis   |
+| 🧬 Codex     |       ✅ Supported via plugin | Plugin skills, API operation, login, store planning |
 | 🦞 OpenClaw  |                     ✅ Supported | Browser-control workflows and store comparison    |
 | 🤖 Nanobot   |                     ✅ Supported | Lightweight task execution and grocery assistance |
 | Other agents | 🚧 Not officially supported yet | May work later                                    |
