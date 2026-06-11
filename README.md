@@ -41,9 +41,10 @@ This repository is also packaged as a **Codex plugin**. It includes:
 
 ```txt
 .codex-plugin/plugin.json          # Codex plugin manifest
+.claude-plugin/plugin.json         # Claude Code plugin manifest
 .agents/plugins/marketplace.json   # Repo marketplace entry
-skills/instacart-for-agents/       # Codex plugin skill
-AGENTS.md                          # Repo-wide Codex instructions
+skills/instacart-for-agents/       # Shared plugin skill
+AGENTS.md                          # Repo-wide Codex/Copilot instructions
 ```
 
 Install the marketplace from Codex:
@@ -53,14 +54,28 @@ codex plugin marketplace add Waleeeeed88/instacart-for-agents --ref main
 codex /plugins
 ```
 
-For local plugin development from a checkout:
+Or use the npm/npx installer for multiple agents:
 
 ```bash
-codex plugin marketplace add ./
-codex /plugins
+npx instacart-for-agents add all --repo .
 ```
 
-Then install/enable **Instacart for Agents** and invoke `@instacart-for-agents` when you want Codex to use this layer.
+Until the npm package is published, use the GitHub repo directly:
+
+```bash
+npx github:Waleeeeed88/instacart-for-agents add all --repo .
+```
+
+Agent-specific installers:
+
+```bash
+npx instacart-for-agents add codex --repo .
+npx instacart-for-agents add claude --repo .
+npx instacart-for-agents add cursor --repo .
+npx instacart-for-agents add copilot --repo .
+```
+
+Then install/enable **Instacart for Agents** where needed and invoke `@instacart-for-agents` in Codex. See [`INSTALL.md`](INSTALL.md) for all setup modes.
 
 ---
 
@@ -68,13 +83,16 @@ Then install/enable **Instacart for Agents** and invoke `@instacart-for-agents` 
 
 For now, this layer is designed for:
 
-| Agent        |                          Status | Purpose                                           |
-| ------------ | ------------------------------: | ------------------------------------------------- |
-| 🧠 Hermes    |                     ✅ Supported | Grocery planning, page reasoning, cart analysis   |
-| 🧬 Codex     |       ✅ Supported via plugin | Plugin skills, API operation, login, store planning |
-| 🦞 OpenClaw  |                     ✅ Supported | Browser-control workflows and store comparison    |
-| 🤖 Nanobot   |                     ✅ Supported | Lightweight task execution and grocery assistance |
-| Other agents | 🚧 Not officially supported yet | May work later                                    |
+| Agent         | Status                          | Purpose                                             |
+| ------------- | ------------------------------- | --------------------------------------------------- |
+| 🧠 Hermes     | ✅ Supported                     | Grocery planning, page reasoning, cart analysis     |
+| 🧬 Codex      | ✅ Plugin + npx installer        | Plugin skills, API operation, login, store planning |
+| 🪶 Claude Code | ✅ Plugin/skill + npx installer | Skills, login rules, safe grocery planning          |
+| 🧭 Cursor     | ✅ Rule + npx installer          | Editor agent guidance for Instacart/API work        |
+| 🧑‍💻 Copilot  | ✅ Repo instructions + npx installer | GitHub agent/review instructions                 |
+| 🦞 OpenClaw   | ✅ Supported                     | Browser-control workflows and store comparison      |
+| 🤖 Nanobot    | ✅ Supported                     | Lightweight task execution and grocery assistance   |
+| Other agents  | 🚧 Not officially supported yet | May work later                                      |
 
 ---
 

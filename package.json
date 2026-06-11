@@ -1,17 +1,23 @@
 {
-  "name": "instacart-api",
-  "version": "1.0.0",
+  "name": "instacart-for-agents",
+  "version": "1.1.0",
   "private": false,
-  "description": "TypeScript Instacart.ca API layer for safe agent-driven grocery planning over a user-authorized browser controller.",
+  "description": "Codex/Claude/Cursor/Copilot installable Instacart.ca agent plugin and TypeScript API for safe grocery planning.",
   "main": "dist/src/server.js",
   "types": "dist/src/server.d.ts",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "node dist/src/server.js",
-    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\"",
+    "build": "npm run clean && tsc -p tsconfig.json",
     "test": "node --import tsx --test test/**/*.test.ts",
-    "check": "npm run build && npm test"
+    "check": "npm run build && npm test",
+    "install:codex": "node ./bin/instacart-for-agents.js add codex --repo .",
+    "install:claude": "node ./bin/instacart-for-agents.js add claude --repo .",
+    "install:cursor": "node ./bin/instacart-for-agents.js add cursor --repo .",
+    "install:copilot": "node ./bin/instacart-for-agents.js add copilot --repo .",
+    "install:agents": "node ./bin/instacart-for-agents.js add all --repo ."
   },
   "keywords": [
     "instacart",
@@ -33,5 +39,22 @@
     "@types/node": "^24.10.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "bin": {
+    "instacart-for-agents": "./bin/instacart-for-agents.js",
+    "instacart-agents": "./bin/instacart-for-agents.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "skills/",
+    "SKILLS/",
+    ".codex-plugin/",
+    ".claude-plugin/",
+    ".agents/plugins/",
+    "AGENTS.md",
+    "README.md",
+    "INSTALL.md",
+    "dist/src/"
+  ]
 }

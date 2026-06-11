@@ -34,6 +34,23 @@ test('Codex plugin manifest follows the expected installable shape', async () =>
   assert.match(pluginSkill, /SKILLS\/instacart-phone-otp-login\/SKILL.md/);
 });
 
+test('Claude plugin manifest follows the expected local plugin shape', async () => {
+  const plugin = await readJson<{
+    name?: string;
+    version?: string;
+    description?: string;
+    repository?: string;
+  }>('.claude-plugin/plugin.json');
+
+  assert.equal(plugin.name, 'instacart-for-agents');
+  assert.match(plugin.version ?? '', /^\d+\.\d+\.\d+/);
+  assert.match(plugin.description ?? '', /Claude Code plugin/);
+  assert.equal(plugin.repository, 'https://github.com/Waleeeeed88/instacart-for-agents');
+
+  const claudePluginFiles = await readdir(path.join(root, '.claude-plugin'));
+  assert.deepEqual(claudePluginFiles.sort(), ['plugin.json']);
+});
+
 test('repo marketplace exposes the Codex plugin from the repository root', async () => {
   const marketplace = await readJson<{
     name?: string;
