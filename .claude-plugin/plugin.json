@@ -1,0 +1,10 @@
+{
+  "name": "instacart-for-agents",
+  "description": "Claude Code plugin for safe Instacart.ca phone OTP login, store discovery, cart analysis, and grocery planning.",
+  "version": "1.1.0",
+  "author": {
+    "name": "Waleeeeed88"
+  },
+  "repository": "https://github.com/Waleeeeed88/instacart-for-agents",
+  "license": "MIT"
+}
