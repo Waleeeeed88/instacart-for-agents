@@ -43,6 +43,7 @@ This repository is also packaged as a **Codex plugin**. It includes:
 .codex-plugin/plugin.json          # Codex plugin manifest
 .claude-plugin/plugin.json         # Claude Code plugin manifest
 .claude-plugin/marketplace.json    # Claude Code marketplace catalog
+.cursor/rules/instacart-for-agents.mdc # Cursor project rule
 .agents/plugins/marketplace.json   # Repo marketplace entry
 skills/instacart-for-agents/       # Shared plugin skill
 AGENTS.md                          # Repo-wide Codex/Copilot instructions

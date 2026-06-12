@@ -150,6 +150,16 @@ Use `/instacart-for-agents` in Claude Code or let Claude auto-load it when the t
 
 ## Cursor
 
+This repo now includes a canonical Cursor project rule:
+
+```txt
+.cursor/rules/instacart-for-agents.mdc
+```
+
+If you clone this repo in Cursor, the rule is available to the Cursor agent for Instacart/API work.
+
+To install the rule into another repo:
+
 ```bash
 npx instacart-for-agents add cursor --repo .
 ```

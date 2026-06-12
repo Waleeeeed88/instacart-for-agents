@@ -41,6 +41,11 @@ test('installer CLI writes Codex, Claude, Cursor, and Copilot repo files', async
     assert.equal(existsSync(path.join(repo, 'plugins/instacart-for-agents/.claude-plugin/plugin.json')), true);
     assert.equal(existsSync(path.join(repo, '.claude/skills/instacart-for-agents/SKILL.md')), true);
     assert.equal(existsSync(path.join(repo, '.cursor/rules/instacart-for-agents.mdc')), true);
+    const cursorRule = await readFile(path.join(repo, '.cursor/rules/instacart-for-agents.mdc'), 'utf8');
+    const canonicalCursorRule = await readFile(path.join(root, '.cursor/rules/instacart-for-agents.mdc'), 'utf8');
+    assert.equal(cursorRule, canonicalCursorRule);
+    assert.match(cursorRule, /alwaysApply: false/);
+    assert.match(cursorRule, /Never implement or trigger checkout/);
 
     const copilot = await readFile(path.join(repo, '.github/copilot-instructions.md'), 'utf8');
     assert.match(copilot, /instacart-for-agents:start/);
