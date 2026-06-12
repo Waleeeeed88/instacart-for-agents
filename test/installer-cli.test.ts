@@ -48,8 +48,12 @@ test('installer CLI writes Codex, Claude, Cursor, and Copilot repo files', async
     assert.match(cursorRule, /Never implement or trigger checkout/);
 
     const copilot = await readFile(path.join(repo, '.github/copilot-instructions.md'), 'utf8');
+    const canonicalCopilot = await readFile(path.join(root, '.github/copilot-instructions.md'), 'utf8');
+    assert.equal(copilot, canonicalCopilot);
     assert.match(copilot, /instacart-for-agents:start/);
+    assert.match(copilot, /instacart-for-agents@1\.1\.0/);
     assert.match(copilot, /phone-number OTP/);
+    assert.match(copilot, /Never implement checkout/);
   } finally {
     await rm(repo, { recursive: true, force: true });
   }

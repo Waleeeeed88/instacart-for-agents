@@ -91,6 +91,17 @@ test('Cursor project rule follows the expected repository rule shape', async () 
   assert.match(cursorRule, /instacart-for-agents@1\.1\.0/);
 });
 
+test('GitHub Copilot instructions follow the expected repository instruction shape', async () => {
+  const copilotInstructions = await readFile(path.join(root, '.github/copilot-instructions.md'), 'utf8');
+
+  assert.match(copilotInstructions, /instacart-for-agents:start/);
+  assert.match(copilotInstructions, /GitHub Copilot Instructions/);
+  assert.match(copilotInstructions, /instacart-for-agents@1\.1\.0/);
+  assert.match(copilotInstructions, /Never implement checkout/);
+  assert.match(copilotInstructions, /Compare all visible address-available Instacart\.ca stores/);
+  assert.match(copilotInstructions, /npm run check/);
+});
+
 test('repo marketplace exposes the Codex plugin from the repository root', async () => {
   const marketplace = await readJson<{
     name?: string;

@@ -200,6 +200,9 @@ function renderCursorRule() {
 }
 
 function renderCopilotInstructions() {
+  const copilotInstructionsPath = join(PACKAGE_ROOT, '.github/copilot-instructions.md');
+  if (existsSync(copilotInstructionsPath)) return readFileSync(copilotInstructionsPath, 'utf8');
+
   return `${MARKER_START}\n# Instacart for Agents\n\nWhen working in this repository, treat it as a safe Instacart.ca agent layer and Codex plugin.\n\n- Use phone-number OTP for login; never ask for Instacart passwords.\n- Separate the two login cases: not logged in vs already logged in.\n- Verify /instacart/login/status before store discovery or cart planning.\n- Compare all visible address-available Instacart.ca grocery stores, including Costco when available.\n- Never implement checkout, payment, place-order, or delivery-confirmation automation.\n- Run npm run check before proposing merge.\n${MARKER_END}\n`;
 }
 
