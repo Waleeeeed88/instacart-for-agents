@@ -4,7 +4,14 @@ This repo can be used as:
 
 1. a local TypeScript Instacart API,
 2. a Codex plugin marketplace repo,
-3. an npm/npx installer for Codex, Claude Code, Cursor, and GitHub Copilot repo setup.
+3. a Claude Code plugin marketplace repo,
+4. an npm/npx installer for Codex, Claude Code, Cursor, and GitHub Copilot repo setup.
+
+The npm package is already published as:
+
+```txt
+instacart-for-agents@1.1.0
+```
 
 ## Fastest commands
 
@@ -87,11 +94,26 @@ This writes:
 
 ## Claude Code
 
-This repo now includes a Claude Code plugin manifest:
+This repo now includes a Claude Code plugin manifest and marketplace catalog:
 
 ```txt
 .claude-plugin/plugin.json
+.claude-plugin/marketplace.json
 skills/instacart-for-agents/SKILL.md
+```
+
+Add the self-hosted Claude Code marketplace from GitHub:
+
+```bash
+claude plugin marketplace add Waleeeeed88/instacart-for-agents
+claude plugin install instacart-for-agents@instacart-for-agents
+```
+
+Equivalent commands inside Claude Code:
+
+```txt
+/plugin marketplace add Waleeeeed88/instacart-for-agents
+/plugin install instacart-for-agents@instacart-for-agents
 ```
 
 Load directly as a local Claude plugin while developing:

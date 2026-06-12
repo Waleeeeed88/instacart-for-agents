@@ -42,6 +42,7 @@ This repository is also packaged as a **Codex plugin**. It includes:
 ```txt
 .codex-plugin/plugin.json          # Codex plugin manifest
 .claude-plugin/plugin.json         # Claude Code plugin manifest
+.claude-plugin/marketplace.json    # Claude Code marketplace catalog
 .agents/plugins/marketplace.json   # Repo marketplace entry
 skills/instacart-for-agents/       # Shared plugin skill
 AGENTS.md                          # Repo-wide Codex/Copilot instructions
@@ -75,7 +76,7 @@ npx instacart-for-agents add cursor --repo .
 npx instacart-for-agents add copilot --repo .
 ```
 
-Then install/enable **Instacart for Agents** where needed and invoke `@instacart-for-agents` in Codex. See [`INSTALL.md`](INSTALL.md) for all setup modes.
+Then install/enable **Instacart for Agents** where needed and invoke `@instacart-for-agents` in Codex. Claude Code can add this repo as a marketplace with `claude plugin marketplace add Waleeeeed88/instacart-for-agents`. The npm installer is live as `instacart-for-agents@1.1.0`. See [`INSTALL.md`](INSTALL.md) for all setup modes.
 
 ---
 
