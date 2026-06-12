@@ -1,0 +1,27 @@
+{
+  "name": "instacart-for-agents",
+  "owner": {
+    "name": "Waleeeeed88"
+  },
+  "description": "Claude Code marketplace for safe Instacart.ca phone OTP login, store discovery, cart analysis, and grocery planning.",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "name": "instacart-for-agents",
+      "source": "./",
+      "description": "Safe Instacart.ca grocery planning plugin for Claude Code.",
+      "version": "1.1.0",
+      "author": {
+        "name": "Waleeeeed88"
+      },
+      "category": "Productivity",
+      "tags": [
+        "instacart",
+        "grocery-planning",
+        "phone-otp",
+        "cart-analysis",
+        "agent-tools"
+      ]
+    }
+  ]
+}

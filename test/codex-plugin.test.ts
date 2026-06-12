@@ -48,7 +48,36 @@ test('Claude plugin manifest follows the expected local plugin shape', async () 
   assert.equal(plugin.repository, 'https://github.com/Waleeeeed88/instacart-for-agents');
 
   const claudePluginFiles = await readdir(path.join(root, '.claude-plugin'));
-  assert.deepEqual(claudePluginFiles.sort(), ['plugin.json']);
+  assert.deepEqual(claudePluginFiles.sort(), ['marketplace.json', 'plugin.json']);
+});
+
+test('Claude marketplace exposes the plugin from the repository root', async () => {
+  const marketplace = await readJson<{
+    name?: string;
+    owner?: { name?: string };
+    description?: string;
+    plugins?: Array<{
+      name?: string;
+      source?: string;
+      description?: string;
+      version?: string;
+      category?: string;
+      tags?: string[];
+    }>;
+  }>('.claude-plugin/marketplace.json');
+
+  assert.equal(marketplace.name, 'instacart-for-agents');
+  assert.equal(marketplace.owner?.name, 'Waleeeeed88');
+  assert.match(marketplace.description ?? '', /Claude Code marketplace/);
+  assert.equal(marketplace.plugins?.length, 1);
+
+  const entry = marketplace.plugins?.[0];
+  assert.equal(entry?.name, 'instacart-for-agents');
+  assert.equal(entry?.source, './');
+  assert.match(entry?.description ?? '', /Instacart\.ca grocery planning/);
+  assert.equal(entry?.version, '1.1.0');
+  assert.equal(entry?.category, 'Productivity');
+  assert.equal(entry?.tags?.includes('phone-otp'), true);
 });
 
 test('repo marketplace exposes the Codex plugin from the repository root', async () => {
