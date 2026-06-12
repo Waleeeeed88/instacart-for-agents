@@ -52,6 +52,7 @@
     ".codex-plugin/",
     ".claude-plugin/",
     ".cursor/rules/",
+    ".github/copilot-instructions.md",
     ".agents/plugins/",
     "AGENTS.md",
     "README.md",

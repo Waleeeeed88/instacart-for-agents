@@ -37,16 +37,23 @@ Let agents help users plan groceries.
 Never let agents complete purchases.
 ```
 
-This repository is also packaged as a **Codex plugin**. It includes:
+This repository is also an **existing npm package** and multi-agent integration bundle:
 
 ```txt
-.codex-plugin/plugin.json          # Codex plugin manifest
-.claude-plugin/plugin.json         # Claude Code plugin manifest
-.claude-plugin/marketplace.json    # Claude Code marketplace catalog
+npm: instacart-for-agents@1.1.0
+```
+
+It includes:
+
+```txt
+.codex-plugin/plugin.json              # Codex plugin manifest
+.claude-plugin/plugin.json             # Claude Code plugin manifest
+.claude-plugin/marketplace.json        # Claude Code marketplace catalog
 .cursor/rules/instacart-for-agents.mdc # Cursor project rule
-.agents/plugins/marketplace.json   # Repo marketplace entry
-skills/instacart-for-agents/       # Shared plugin skill
-AGENTS.md                          # Repo-wide Codex/Copilot instructions
+.github/copilot-instructions.md        # GitHub Copilot repository instructions
+.agents/plugins/marketplace.json       # Repo marketplace entry
+skills/instacart-for-agents/           # Shared plugin skill
+AGENTS.md                              # Repo-wide agent instructions
 ```
 
 Install the marketplace from Codex:
@@ -56,13 +63,13 @@ codex plugin marketplace add Waleeeeed88/instacart-for-agents --ref main
 codex /plugins
 ```
 
-Or use the npm/npx installer for multiple agents:
+Or use the existing npm package for multiple agents:
 
 ```bash
 npx instacart-for-agents add all --repo .
 ```
 
-Until the npm package is published, use the GitHub repo directly:
+The package is live on npm; if you specifically want to install from GitHub instead, use:
 
 ```bash
 npx github:Waleeeeed88/instacart-for-agents add all --repo .

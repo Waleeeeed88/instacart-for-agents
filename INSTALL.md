@@ -17,13 +17,19 @@ instacart-for-agents@1.1.0
 
 ### npm / npx
 
-After the package is published to npm:
+The package is already published to npm:
+
+```txt
+instacart-for-agents@1.1.0
+```
+
+Use it directly:
 
 ```bash
 npx instacart-for-agents add all --repo .
 ```
 
-Until it is published, use the GitHub repo directly:
+To install from GitHub instead of npm:
 
 ```bash
 npx github:Waleeeeed88/instacart-for-agents add all --repo .
@@ -174,11 +180,21 @@ The rule is intentionally not `alwaysApply`; Cursor should load it for Instacart
 
 ## GitHub Copilot
 
+This repo now includes canonical GitHub Copilot repository instructions:
+
+```txt
+.github/copilot-instructions.md
+```
+
+When this repo is opened with GitHub Copilot coding agent or Copilot Chat, those instructions keep Copilot focused on safe Instacart/API work and block checkout/payment/order-placement automation.
+
+To install the same managed instructions into another repo:
+
 ```bash
 npx instacart-for-agents add copilot --repo .
 ```
 
-This writes or updates a managed section in:
+This writes or updates the managed Instacart section in:
 
 ```txt
 .github/copilot-instructions.md
