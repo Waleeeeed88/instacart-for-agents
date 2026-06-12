@@ -1,0 +1,47 @@
+---
+description: Use Instacart for Agents when working on Instacart.ca login, grocery planning, store discovery, cart analysis, or safe cart mutation.
+globs:
+alwaysApply: false
+---
+
+# Instacart for Agents
+
+Use this Cursor rule when the task touches Instacart.ca login, store discovery, grocery planning, cart analysis, cart mutation, or the Instacart TypeScript API in this repository.
+
+## Safety boundaries
+
+- Never implement or trigger checkout, payment submission, place-order, delivery confirmation, or irreversible purchase flows.
+- Never ask for Instacart passwords. Use phone-number OTP only when login is required.
+- Do not store phone numbers, OTP codes, browser profiles, cookies, API keys, screenshots with sensitive account data, or `.env` secrets.
+- Do not create public/shared browser links unless the user explicitly asks.
+
+## Workflow
+
+1. Classify the session first: already logged in vs not logged in.
+2. If not logged in, use the phone OTP flow and verify login status before planning.
+3. Discover stores based on the active address before selecting a retailer.
+4. Compare all visible address-available Instacart.ca stores, including Costco when available.
+5. Prefer cheap, high-protein, halal-aware grocery planning when user constraints do not override it.
+6. Verify live cart analysis before claiming a cart is ready.
+
+## Relevant local API endpoints
+
+- `GET /instacart/login/status`
+- `POST /instacart/login/start`
+- `POST /instacart/login/otp`
+- `POST /instacart/analysis`
+- `POST /instacart/cart-plan`
+
+## Development checks
+
+Before opening or updating a PR, run:
+
+```bash
+npm run check
+```
+
+The npm installer is published as:
+
+```txt
+instacart-for-agents@1.1.0
+```

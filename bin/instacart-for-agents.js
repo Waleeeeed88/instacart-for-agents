@@ -151,6 +151,7 @@ function copyPluginBundle(destination) {
   const entries = [
     ['.codex-plugin', '.codex-plugin'],
     ['.claude-plugin', '.claude-plugin'],
+    ['.cursor', '.cursor'],
     ['skills', 'skills'],
     ['SKILLS', 'SKILLS'],
     ['AGENTS.md', 'AGENTS.md'],
@@ -192,7 +193,10 @@ function renderClaudeSkill() {
 }
 
 function renderCursorRule() {
-  return `---\ndescription: Use Instacart for Agents for Instacart login, store discovery, cart analysis, and safe grocery planning.\nglobs: []\nalwaysApply: false\n---\n\n# Instacart for Agents\n\nUse this rule when working on Instacart login, grocery planning, cart analysis, store comparison, or the Instacart API layer.\n\n- Preferred login path: phone-number OTP only. Do not ask for passwords.\n- First classify the session: not logged in vs already logged in.\n- For not-logged-in users, use phone OTP and verify connection before planning.\n- Compare all visible address-available Instacart.ca grocery stores before choosing a store.\n- Never check out, place orders, submit payment, or confirm delivery.\n- Relevant endpoints: /instacart/login/status, /instacart/login/start, /instacart/login/otp, /instacart/analysis, /instacart/cart-plan.\n`;
+  const cursorRulePath = join(PACKAGE_ROOT, '.cursor/rules/instacart-for-agents.mdc');
+  if (existsSync(cursorRulePath)) return readFileSync(cursorRulePath, 'utf8');
+
+  return `---\ndescription: Use Instacart for Agents for Instacart login, store discovery, cart analysis, and safe grocery planning.\nglobs:\nalwaysApply: false\n---\n\n# Instacart for Agents\n\nUse this rule when working on Instacart login, grocery planning, cart analysis, store comparison, or the Instacart API layer.\n\n- Preferred login path: phone-number OTP only. Do not ask for passwords.\n- First classify the session: not logged in vs already logged in.\n- For not-logged-in users, use phone OTP and verify connection before planning.\n- Compare all visible address-available Instacart.ca grocery stores before choosing a store.\n- Never check out, place orders, submit payment, or confirm delivery.\n- Relevant endpoints: /instacart/login/status, /instacart/login/start, /instacart/login/otp, /instacart/analysis, /instacart/cart-plan.\n`;
 }
 
 function renderCopilotInstructions() {

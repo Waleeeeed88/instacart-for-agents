@@ -80,6 +80,17 @@ test('Claude marketplace exposes the plugin from the repository root', async () 
   assert.equal(entry?.tags?.includes('phone-otp'), true);
 });
 
+test('Cursor project rule follows the expected repository rule shape', async () => {
+  const cursorRule = await readFile(path.join(root, '.cursor/rules/instacart-for-agents.mdc'), 'utf8');
+
+  assert.match(cursorRule, /^---\n/);
+  assert.match(cursorRule, /description: Use Instacart for Agents/);
+  assert.match(cursorRule, /alwaysApply: false/);
+  assert.match(cursorRule, /Never implement or trigger checkout/);
+  assert.match(cursorRule, /Compare all visible address-available Instacart\.ca stores/);
+  assert.match(cursorRule, /instacart-for-agents@1\.1\.0/);
+});
+
 test('repo marketplace exposes the Codex plugin from the repository root', async () => {
   const marketplace = await readJson<{
     name?: string;

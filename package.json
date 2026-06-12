@@ -51,6 +51,7 @@
     "SKILLS/",
     ".codex-plugin/",
     ".claude-plugin/",
+    ".cursor/rules/",
     ".agents/plugins/",
     "AGENTS.md",
     "README.md",
